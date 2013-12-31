@@ -1,3 +1,4 @@
+require 'msu/line_parser'
 require 'msu/mode'
 require 'msu/pos'
 

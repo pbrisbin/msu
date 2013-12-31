@@ -1,3 +1,5 @@
+require 'msu/display'
+
 module MSU
   Displays = Struct.new(:connected, :disconnected) do
     def self.parse(xrandr_output)

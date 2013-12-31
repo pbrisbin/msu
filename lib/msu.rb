@@ -1,7 +1,6 @@
 require 'msu/command'
-require 'msu/display'
 require 'msu/displays'
-require 'msu/line_parser'
+require 'msu/hook'
 
 module MSU
   class Client
@@ -12,12 +11,12 @@ module MSU
     end
 
     def run(argv)
-      # TODO: support non-default actions
-      command.all_off
-      command.extend_right
+      command.all_off.extend_right
 
       puts "#{command}"
       system "#{command}"
+
+      Hook.new('after-setup').run
     end
   end
 end
