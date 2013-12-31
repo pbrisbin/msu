@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require 'msu'
+MSU::Client.new(`xrandr --query`).run(ARGV)

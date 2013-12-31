@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    msu (0.0.1)
+      bundler
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -15,4 +21,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  msu!
   rspec

@@ -1,3 +1,6 @@
+require 'msu/mode'
+require 'msu/pos'
+
 module MSU
   class Display
     attr_reader :name, :position, :modes
