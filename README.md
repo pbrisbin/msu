@@ -23,13 +23,12 @@ $ msu
 
 ## Hooks
 
+*TODO*
+
 If `$XDG_CONFIG_HOME/msu/after-setup` exists and is executable, it is 
 executed after the setup occurs. Use this to do things like reset 
 wallpapers or restart any programs sensitive to monitor sizes.
 
 ## Install
 
-```
-$ git clone https://github.com/pbrisbin/msu && cd msu
-$ rake install
-```
+*TODO: git clone, cabal install, etc*
