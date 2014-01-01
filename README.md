@@ -8,6 +8,8 @@ A wrapper over `xrandr` with the following goals:
 
 ## Usage
 
+*TODO: currently prints the command to run, does not run it!*
+
 ```
 $ msu
 ```
@@ -16,10 +18,6 @@ $ msu
 * Enable any connected displays, at their first mode, extending each to 
   the right of the last (`--output <name> --mode <mode> --right-of 
   <last>`)
-
-## Options
-
-*TODO: mirror, extend-one, etc*
 
 ## Hooks
 
@@ -31,4 +29,6 @@ wallpapers or restart any programs sensitive to monitor sizes.
 
 ## Install
 
-*TODO: git clone, cabal install, etc*
+```
+$ git clone https://github.com/pbrisbin/msu && cd ./msu && cabal install
+```
