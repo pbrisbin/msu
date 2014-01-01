@@ -15,5 +15,3 @@ handle :: [Display] -> IO ()
 handle displays = print $ buildCommand $ do
     allOff $ filter (not . isConnected) displays
     extendRight $ filter isConnected displays
-
-    -- TODO: hooks

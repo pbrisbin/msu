@@ -14,35 +14,32 @@ parseDisplays = do
     manyTill parseDisplay eof
 
 parseDisplay :: Parser Display
-parseDisplay = try parseConnected <|> parseDisconnected
+parseDisplay = do
+    name  <- manyTill anyToken space
+    string "connected" <|> string "disconnected"
+    ignoreLine
+    modes <- option [] $ parseModeLines
 
-parseConnected :: Parser Display
-parseConnected = do
-    name <- manyTill anyToken space
-    string "connected" >> ignoreLine
-    modes <- manyTill parseModeLine (lookAhead $ try parseDisplay)
+    return $ Display name modes
 
-    return $ Connected name modes
+parseModeLines :: Parser [Mode]
+parseModeLines = manyTill parseModeLine nextDisplay
 
-parseDisconnected :: Parser Display
-parseDisconnected = do
-    name <- manyTill anyToken space
-    string "disconnected" >> ignoreLine
-
-    return $ Disconnected name
+    where
+        nextDisplay :: Parser Display
+        nextDisplay = lookAhead $ try parseDisplay
 
 parseModeLine :: Parser Mode
 parseModeLine = do
-    _ <- spaces
-    w <- many digit
-    _ <- char 'x'
-    h <- many digit
+    w <- spaces >> many digit
+    h <- char 'x' >> many digit
     ignoreLine
 
     return $ Mode (read w) (read h)
 
 ignoreLine :: Parser ()
 ignoreLine = manyTill anyToken eol >> return ()
+
     where
         eol :: Parser Char
         eol = char '\n'

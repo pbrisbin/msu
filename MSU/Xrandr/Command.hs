@@ -5,26 +5,19 @@ import Control.Monad.Writer
 import Data.Monoid
 import MSU.Display
 
-newtype Command = Command String deriving Show
-
-instance Monoid Command where
-    mempty = Command ""
-    mappend (Command cmd1) (Command cmd2) = Command $ cmd1 ++ cmd2
-
-type Xrandr a = Writer Command a
+type Xrandr a = Writer String a
 
 output :: Display -> Xrandr ()
-output d = tell $ Command $ " --output " ++ name d
-
+output d = tell $ " --output " ++ name d
 
 off :: Xrandr ()
-off = tell $ Command " --off"
+off = tell " --off"
 
 mode :: Mode -> Xrandr ()
-mode m = tell $ Command $ " --mode " ++ show m
+mode m = tell $ " --mode " ++ show m
 
 rightOf :: Display -> Xrandr ()
-rightOf d = tell $ Command $ " --right-of " ++ name d
+rightOf d = tell $ " --right-of " ++ name d
 
 allOff :: [Display] -> Xrandr ()
 allOff = mapM_ (\d -> output d >> off)
@@ -44,5 +37,5 @@ extendRight (first:rest) = do
 
             return secondary
 
-buildCommand :: (Xrandr a) -> Command
-buildCommand f = execWriter $ tell (Command "xrandr") >> f
+buildCommand :: (Xrandr a) -> String
+buildCommand f = execWriter $ tell "xrandr" >> f
