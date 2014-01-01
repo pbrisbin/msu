@@ -15,12 +15,12 @@ parseDisplays = do
 
 parseDisplay :: Parser Display
 parseDisplay = do
-    name  <- manyTill anyToken space
-    string "connected" <|> string "disconnected"
+    n  <- manyTill anyToken space
+    _ <- string "connected" <|> string "disconnected"
     ignoreLine
-    modes <- option [] $ parseModeLines
+    ms <- option [] $ parseModeLines
 
-    return $ Display name modes
+    return $ Display n ms
 
 parseModeLines :: Parser [Mode]
 parseModeLines = manyTill parseModeLine nextDisplay

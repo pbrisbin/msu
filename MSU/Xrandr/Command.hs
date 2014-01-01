@@ -2,7 +2,6 @@ module MSU.Xrandr.Command where
 
 import Control.Monad
 import Control.Monad.Writer
-import Data.Monoid
 import MSU.Display
 
 type Xrandr a = Writer String a
