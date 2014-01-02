@@ -22,6 +22,11 @@ allOff :: [Display] -> Xrandr ()
 allOff = mapM_ (\d -> output d >> off)
 
 -- | N.B. Only to be called on connected displays
+firstOn :: [Display] -> Xrandr ()
+firstOn [] = return ()
+firstOn (display:_) = output display >> mode (head $ modes display)
+
+-- | N.B. Only to be called on connected displays
 extendRight :: [Display] -> Xrandr ()
 extendRight [] = return ()
 extendRight (first:rest) = do

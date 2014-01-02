@@ -1,10 +1,11 @@
 module Main where
 
+import Data.List (partition)
 import MSU.Display
 import MSU.Xrandr.Command
 import MSU.Xrandr.Parse
 import System.IO (hPrint, stderr)
-import System.Process (readProcess)
+import System.Process (readProcess, runCommand)
 
 main :: IO ()
 main = do
@@ -12,9 +13,16 @@ main = do
 
     case parseXrandr xrandrOutput of
         Left err -> hPrint stderr err
-        Right displays -> print $ defaultCommand displays
+        Right displays -> do
+            runCmd $ defaultCommand displays
 
 defaultCommand :: [Display] -> String
 defaultCommand displays = buildCommand $ do
-    allOff $ filter (not . isConnected) displays
-    extendRight $ filter isConnected displays
+    let (connected, disconnected) = partition isConnected displays
+
+    allOff disconnected
+    firstOn connected
+    extendRight connected
+
+runCmd :: String -> IO ()
+runCmd cmd = putStrLn cmd >> runCommand cmd >> return ()
