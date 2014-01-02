@@ -6,7 +6,7 @@ import MSU.Hooks
 import MSU.Xrandr.Command
 import MSU.Xrandr.Parse
 import System.IO (hPrint, stderr)
-import System.Process (readProcess, runCommand)
+import System.Process (readProcess, runCommand, waitForProcess)
 
 main :: IO ()
 main = do
@@ -27,4 +27,8 @@ defaultCommand displays = buildCommand $ do
     extendRight connected
 
 runCmd :: String -> IO ()
-runCmd cmd = putStrLn cmd >> runCommand cmd >> return ()
+runCmd cmd = do
+    putStrLn cmd
+    _ <- waitForProcess =<< runCommand cmd
+
+    return ()
