@@ -15,7 +15,7 @@ parseDisplays = do
 
 parseDisplay :: Parser Display
 parseDisplay = do
-    n  <- manyTill anyToken space
+    n <- manyTill anyToken space
     _ <- string "connected" <|> string "disconnected"
     ignoreLine
     ms <- option [] $ parseModeLines
