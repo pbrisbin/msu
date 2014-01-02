@@ -1,5 +1,8 @@
 name:          msu
 version:       0.0.1
+synopsis:      Monitor Setup Utility
+description:   Convenient wrapper over xrandr for setting up monitors
+homepage:      http://github.com/pbrisbin/msu
 license:       MIT
 copyright:     (c) 2013 Pat Brisbin
 author:        Pat Brisbin <pbrisbin@gmail.com>
@@ -10,7 +13,7 @@ cabal-version: >= 1.8
 executable msu
   main-is: main.hs
 
-  ghc-options: -Wall -Werror
+  ghc-options: -Wall
 
   build-depends: base == 4.*
                , directory
