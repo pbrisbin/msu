@@ -1,34 +1,29 @@
 # Monitor Setup Utility
 
-A wrapper over `xrandr` with the following goals:
-
-* Perform the most common setup by default
-* Have simple, one-word commands for other common situations
-* Execute whatever setup is required as a single `xrandr` invocation
+Setup my monitor(s) automatically using `xrandr` no matter what machine 
+I'm on or what displays are or are not connected.
 
 ## Usage
-
-*TODO: currently prints the command to run, does not run it!*
 
 ```
 $ msu
 ```
 
-* Disable any disconnected displays (`--output <name> --off`)
-* Enable any connected displays, at their first mode, extending each to 
-  the right of the last (`--output <name> --mode <mode> --right-of 
-  <last>`)
+* Disable all disconnected displays
+
+* Enable first connected display at it's highest resolution
+
+* Enable all other connected displays, at their highest resolutions, 
+  extending each to the right of the last
 
 ## Hooks
-
-*TODO*
 
 If `$XDG_CONFIG_HOME/msu/after-setup` exists and is executable, it is 
 executed after the setup occurs. Use this to do things like reset 
 wallpapers or restart any programs sensitive to monitor sizes.
 
-## Install
+## Installation
 
 ```
-$ git clone https://github.com/pbrisbin/msu && cd ./msu && cabal install
+$ cabal install msu
 ```
