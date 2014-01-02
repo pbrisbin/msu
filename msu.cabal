@@ -13,6 +13,9 @@ executable msu
   ghc-options: -Wall -Werror
 
   build-depends: base == 4.*
+               , directory
+               , filepath
                , mtl
                , parsec
                , process
+               , xdg-basedir

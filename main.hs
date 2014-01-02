@@ -2,6 +2,7 @@ module Main where
 
 import Data.List (partition)
 import MSU.Display
+import MSU.Hooks
 import MSU.Xrandr.Command
 import MSU.Xrandr.Parse
 import System.IO (hPrint, stderr)
@@ -15,6 +16,7 @@ main = do
         Left err -> hPrint stderr err
         Right displays -> do
             runCmd $ defaultCommand displays
+            runHook runCmd "after-setup"
 
 defaultCommand :: [Display] -> String
 defaultCommand displays = buildCommand $ do
