@@ -16,18 +16,20 @@ parseDisplays = do
 parseDisplay :: Parser Display
 parseDisplay = do
     n <- manyTill anyToken space
-    _ <- string "connected" <|> string "disconnected"
+    c <- string "connected" <|> string "disconnected"
     ignoreLine
-    ms <- option [] $ parseModeLines
+
+    ms <- if c == "connected"
+            then parseModeLines
+            else skipModeLines
 
     return $ Display n ms
 
 parseModeLines :: Parser [Mode]
 parseModeLines = manyTill parseModeLine nextDisplay
 
-    where
-        nextDisplay :: Parser Display
-        nextDisplay = lookAhead $ try parseDisplay
+skipModeLines :: Parser [Mode]
+skipModeLines = ignoreLinesTill nextDisplay >> return []
 
 parseModeLine :: Parser Mode
 parseModeLine = do
@@ -36,6 +38,14 @@ parseModeLine = do
     ignoreLine
 
     return $ Mode (read w) (read h)
+
+nextDisplay :: Parser ()
+nextDisplay = lookAhead $ try parseDisplay >> return ()
+
+ignoreLinesTill :: Parser () -> Parser ()
+ignoreLinesTill p = do
+    _ <- manyTill ignoreLine $ p <|> eof
+    return ()
 
 ignoreLine :: Parser ()
 ignoreLine = manyTill anyToken eol >> return ()
