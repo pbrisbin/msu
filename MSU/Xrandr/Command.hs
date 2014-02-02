@@ -26,11 +26,6 @@ outputOn :: Display -> Xrandr Bool
 outputOn (Display _ []) = return False
 outputOn d@(Display _ (m:_)) = output d >> mode m >> return True
 
--- | Some Apple displays freak out if you change the resolution, turning
---   it "off and then on again" seems to avoid that. Sigh.
-outputOffOn :: Display -> Xrandr Bool
-outputOffOn d = outputOff d >> outputOn d
-
 allOff :: [Display] -> Xrandr ()
 allOff = mapM_ outputOff
 
@@ -39,15 +34,18 @@ firstOn []    = return ()
 firstOn (d:_) = outputOn d >> return ()
 
 extendRight :: [Display] -> Xrandr ()
-extendRight [] = return ()
-extendRight (first:rest) = foldM_ setRight first rest
+extendRight = fold1M_ (placeWith outputOn rightOf)
 
-    where
-        setRight :: Display -> Display -> Xrandr Display
-        setRight primary secondary = do
-            outputOffOn secondary &&> rightOf primary
+-- | A foldable function to use while positioning a list of displays
+--   each relative to the last.
+placeWith :: (Display -> Xrandr Bool) -- ^ turn on the secondary
+          -> (Display -> Xrandr ())   -- ^ position it relative to primary
+          -> Display -> Display -> Xrandr Display
+placeWith secondaryCmd primaryCmd primary secondary = do
+    outputOff secondary
+    secondaryCmd secondary &&> primaryCmd primary
 
-            return secondary
+    return secondary
 
 buildCommand :: (Xrandr a) -> String
 buildCommand f = execWriter $ tell "xrandr" >> f
@@ -55,3 +53,8 @@ buildCommand f = execWriter $ tell "xrandr" >> f
 -- | Executes the second action IFF the first returns @True@.
 (&&>) :: Monad m => m Bool -> m () -> m ()
 f &&> g = f >>= \b -> if b then g else return ()
+
+-- | Like foldM_ but uses first element as base value
+fold1M_ :: Monad m => (b -> b -> m b) -> [b] -> m ()
+fold1M_ _ [] = return ()
+fold1M_ f (x:xs) = foldM_ f x xs
