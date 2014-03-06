@@ -9,7 +9,3 @@ data Display = Display
     { name  :: String
     , modes :: [Mode]
     }
-
-isConnected :: Display -> Bool
-isConnected (Display _ []) = False
-isConnected _              = True

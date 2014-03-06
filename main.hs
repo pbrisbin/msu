@@ -20,11 +20,9 @@ main = do
 
 defaultCommand :: [Display] -> String
 defaultCommand displays = buildCommand $ do
-    let (connected, disconnected) = partition isConnected displays
-
-    allOff disconnected
-    firstOn connected
-    extendRight connected
+    allOff displays
+    firstOn displays
+    extend rightOf displays
 
 runCmd :: String -> IO ()
 runCmd cmd = do

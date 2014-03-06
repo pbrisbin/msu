@@ -30,25 +30,28 @@ allOff :: [Display] -> Xrandr ()
 allOff = mapM_ outputOff
 
 firstOn :: [Display] -> Xrandr ()
-firstOn []    = return ()
-firstOn (d:_) = outputOn d >> return ()
+firstOn []     = return ()
+firstOn (d:ds) = outputOn d ||> firstOn ds
 
-extendRight :: [Display] -> Xrandr ()
-extendRight = fold1M_ (placeWith rightOf)
+extend :: (Display -> Xrandr ()) -> [Display] -> Xrandr ()
+extend f = fold1M_ (placeWith f)
 
 placeWith :: (Display -> Xrandr ()) -> Display -> Display -> Xrandr Display
 placeWith placementCmd primary secondary = do
-    outputOff secondary
-    outputOn secondary &&> placementCmd primary
+    didTurnOn <- outputOn secondary
 
-    return secondary
+    if didTurnOn
+        then do
+            placementCmd primary
+            return secondary
+        else return primary
 
 buildCommand :: (Xrandr a) -> String
 buildCommand f = execWriter $ tell "xrandr" >> f
 
--- | Executes the second action IFF the first returns @True@.
-(&&>) :: Monad m => m Bool -> m () -> m ()
-f &&> g = f >>= \b -> if b then g else return ()
+-- | Executes the second action IFF the first returns @False@.
+(||>) :: Monad m => m Bool -> m () -> m ()
+f ||> g = f >>= \b -> unless b g
 
 -- | Like foldM_ but uses first element as base value
 fold1M_ :: Monad m => (b -> b -> m b) -> [b] -> m ()
