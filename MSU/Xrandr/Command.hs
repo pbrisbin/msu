@@ -7,23 +7,23 @@ import MSU.Display
 type Xrandr a = Writer String a
 
 output :: Display -> Xrandr ()
-output = tell . (" --output " ++) . name
+output d = tell $ " --output " ++ name d
 
 off :: Xrandr ()
 off = tell " --off"
 
 mode :: Mode -> Xrandr ()
-mode = tell . (" --mode " ++) . show
+mode m = tell $ " --mode " ++ show m
 
 rightOf :: Display -> Xrandr ()
-rightOf = tell . (" --right-of " ++) . name
+rightOf d = tell $ " --right-of " ++ name d
 
 outputOff :: Display -> Xrandr ()
 outputOff d = output d >> off
 
--- | Does nothing but return @False@ if the output's not connected.
+-- | Return @False@ if the output was not connected.
 outputOn :: Display -> Xrandr Bool
-outputOn (Display _ []) = return False
+outputOn   (Display _ []   ) = return False
 outputOn d@(Display _ (m:_)) = output d >> mode m >> return True
 
 allOff :: [Display] -> Xrandr ()
@@ -34,16 +34,12 @@ firstOn []    = return ()
 firstOn (d:_) = outputOn d >> return ()
 
 extendRight :: [Display] -> Xrandr ()
-extendRight = fold1M_ (placeWith outputOn rightOf)
+extendRight = fold1M_ (placeWith rightOf)
 
--- | A foldable function to use while positioning a list of displays
---   each relative to the last.
-placeWith :: (Display -> Xrandr Bool) -- ^ turn on the secondary
-          -> (Display -> Xrandr ())   -- ^ position it relative to primary
-          -> Display -> Display -> Xrandr Display
-placeWith secondaryCmd primaryCmd primary secondary = do
+placeWith :: (Display -> Xrandr ()) -> Display -> Display -> Xrandr Display
+placeWith placementCmd primary secondary = do
     outputOff secondary
-    secondaryCmd secondary &&> primaryCmd primary
+    outputOn secondary &&> placementCmd primary
 
     return secondary
 
