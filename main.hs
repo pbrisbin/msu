@@ -1,6 +1,5 @@
 module Main where
 
-import Data.List (partition)
 import MSU.Display
 import MSU.Hooks
 import MSU.Xrandr.Command
