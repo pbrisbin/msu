@@ -1,5 +1,5 @@
 name:          msu
-version:       0.0.1
+version:       0.0.2
 synopsis:      Monitor Setup Utility
 description:   Convenient wrapper over xrandr for setting up monitors
 homepage:      http://github.com/pbrisbin/msu
@@ -14,6 +14,11 @@ executable msu
   main-is: main.hs
 
   ghc-options: -Wall
+
+  other-modules: MSU.Display
+               , MSU.Hooks
+               , MSU.Xrandr.Command
+               , MSU.Xrandr.Parse
 
   build-depends: base == 4.*
                , directory
