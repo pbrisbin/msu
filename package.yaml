@@ -1,0 +1,35 @@
+name: msu
+version: 0.0.2
+synopsis: Monitor Setup Utility
+description: Convenient wrapper over xrandr for setting up monitors
+homepage: http://github.com/pbrisbin/msu
+author: Pat Brisbin <pbrisbin@gmail.com>
+maintainer: Pat Brisbin <pbrisbin@gmail.com>
+license: MIT
+
+dependencies:
+  - base >= 4.8.0 && < 5
+
+extra-doc-files:
+  - CHANGELOG.md
+  - README.md
+
+ghc-options: -Wall
+
+library:
+  source-dirs: src
+  dependencies:
+   - directory
+   - filepath
+   - mtl
+   - parsec
+   - process
+   - xdg-basedir
+
+executables:
+  msu:
+    source-dirs: app
+    main: Main.hs
+    dependencies:
+      - msu
+      - process

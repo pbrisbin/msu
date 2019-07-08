@@ -1,11 +1,11 @@
-module Main where
+module Main (main) where
 
-import MSU.Display
+import Control.Monad (void)
 import MSU.Hooks
 import MSU.Xrandr.Command
 import MSU.Xrandr.Parse
 import System.IO (hPrint, stderr)
-import System.Process (readProcess, runCommand, waitForProcess)
+import System.Process (callCommand, readProcess)
 
 main :: IO ()
 main = do
@@ -14,18 +14,10 @@ main = do
     case parseXrandr xrandrOutput of
         Left err -> hPrint stderr err
         Right displays -> do
-            runCmd $ defaultCommand displays
+            runCmd $ buildCommand $ defaultCommand displays
             runHook runCmd "after-setup"
-
-defaultCommand :: [Display] -> String
-defaultCommand displays = buildCommand $ do
-    allOff displays
-    firstOn displays
-    extend rightOf displays
 
 runCmd :: String -> IO ()
 runCmd cmd = do
     putStrLn cmd
-    _ <- waitForProcess =<< runCommand cmd
-
-    return ()
+    void $ callCommand cmd
