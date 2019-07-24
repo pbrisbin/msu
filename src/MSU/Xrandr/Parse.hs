@@ -1,12 +1,21 @@
+{-# LANGUAGE RecordWildCards #-}
+
 module MSU.Xrandr.Parse
-    ( parseXrandr
+    ( Display(..)
+    , parseXrandr
     )
 where
 
 import Control.Monad (void)
-import MSU.Display
 import Text.Parsec
 import Text.Parsec.String
+
+data Display = Display
+    { name :: String
+    , connected :: Bool
+    , modes :: [(Int, Int)]
+    }
+    deriving (Eq, Show)
 
 parseXrandr :: String -> Either ParseError [Display]
 parseXrandr = parse parseDisplays "xrandr --query"
@@ -15,26 +24,24 @@ parseDisplays :: Parser [Display]
 parseDisplays = string "Screen" *> ignoreLine *> manyTill parseDisplay eof
 
 parseDisplay :: Parser Display
-parseDisplay =
-    Display <$> manyTill anyToken space <*> parseModeLinesIfConnected
-
-parseModeLinesIfConnected :: Parser [Mode]
-parseModeLinesIfConnected = do
-    c <- parseConnected <* ignoreLine
-    if c then parseModeLines else skipModeLines
+parseDisplay = do
+    name <- manyTill anyToken space
+    connected <- parseConnected <* ignoreLine
+    modes <- if connected then parseModeLines else skipModeLines
+    pure Display {..}
 
 parseConnected :: Parser Bool
 parseConnected = True <$ string "connected" <|> False <$ string "disconnected"
 
-parseModeLines :: Parser [Mode]
+parseModeLines :: Parser [(Int, Int)]
 parseModeLines = manyTill parseModeLine nextDisplay
 
-skipModeLines :: Parser [Mode]
+skipModeLines :: Parser [(Int, Int)]
 skipModeLines = [] <$ ignoreLinesTill nextDisplay
 
-parseModeLine :: Parser Mode
+parseModeLine :: Parser (Int, Int)
 parseModeLine =
-    Mode
+    (,)
         <$> (read <$> (spaces *> many digit))
         <*> (read <$> (char 'x' *> many digit <* ignoreLine))
 
