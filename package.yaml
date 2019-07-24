@@ -32,6 +32,8 @@ executables:
     source-dirs: app
     main: Main.hs
     dependencies:
+      - directory
+      - filepath
       - msu
       - process
 

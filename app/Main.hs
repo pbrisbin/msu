@@ -7,12 +7,14 @@ where
 
 import MSU.Context
 import MSU.Monitors
+import System.Directory (getHomeDirectory)
+import System.FilePath ((</>))
 import System.Process (callCommand)
 
 main :: IO ()
 main = do
-    let path = "/home/patrick/.monitors.yaml"
-    monitors <- findMonitors <$> getContext <*> readMonitorsFileThrow path
+    yaml <- (</> ".monitors.yaml") <$> getHomeDirectory
+    monitors <- findMonitors <$> getContext <*> readMonitorsFileThrow yaml
 
     maybe
         (putStrLn "No monitors rules matched")
