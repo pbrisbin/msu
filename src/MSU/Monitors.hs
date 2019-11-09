@@ -85,6 +85,8 @@ writeMonitorsFile :: MonadIO m => FilePath -> Monitors -> m ()
 writeMonitorsFile path monitors = liftIO $ do
     exists <- doesFileExist path
     if exists
-        then BS.appendFile path $ "\n" <> encoded
+        then BS.appendFile path $ prefix <> encoded
         else BS.writeFile path encoded
-    where encoded = Yaml.encode [monitors]
+  where
+    prefix = "\n# TODO: created automatically\n"
+    encoded = Yaml.encode [monitors]
