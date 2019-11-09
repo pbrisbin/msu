@@ -22,28 +22,27 @@ spec = do
     describe "findMonitors" $ do
         it "finds matches" $ do
             let context1 = Context
-                    { cDisplays = [ Display {dName = "eDP1"}
-                                  , Display {dName = "DP2-2"}
-                                  ]
-                    , cWifi = Just $ Wifi {wEssid = "pb-and-j"}
+                    { displays =
+                        [Display "eDP1" True [], Display "DP2-2" True []]
+                    , wifi = Just $ Wifi { essid = "pb-and-j" }
                     }
                 context2 = Context
-                    { cDisplays = [ Display {dName = "eDP1"}
-                                  , Display {dName = "DP2-2"}
-                                  ]
-                    , cWifi = Just $ Wifi {wEssid = "other-wifi"}
+                    { displays =
+                        [Display "eDP1" True [], Display "DP2-2" True []]
+                    , wifi = Just $ Wifi { essid = "other-wifi" }
                     }
                 context3 = Context
-                    { cDisplays = [ Display {dName = "eDP1"}
-                                  , Display {dName = "DP2-2"}
-                                  , Display {dName = "DP2-3"}
-                                  ]
-                    , cWifi = Just $ Wifi {wEssid = "pb-and-j"}
+                    { displays =
+                        [ Display "eDP1" True []
+                        , Display "DP2-2" True []
+                        , Display "DP2-3" True []
+                        ]
+                    , wifi = Just $ Wifi { essid = "pb-and-j" }
                     }
 
                 findMonitorsExec c = do
                     ms <- hush $ readMonitorsYaml monitorsYaml
-                    mExec <$> findMonitors c ms
+                    exec <$> findMonitors c ms
 
             findMonitorsExec context1
                 `shouldBe` Just
@@ -56,9 +55,8 @@ monitorsYaml = mconcat
     [ "- name: none\n"
     , "  match:\n"
     , "    displays:\n"
-    , "      connected:\n"
-    , "        eq:\n"
-    , "          - eDP1\n"
+    , "      eq:\n"
+    , "        - eDP1\n"
     , "\n"
     , "  exec: \n"
     , "    xrandr\n"
@@ -75,16 +73,14 @@ monitorsYaml = mconcat
     , "- name: home-dual\n"
     , "  match:\n"
     , "    displays:\n"
-    , "      connected:\n"
-    , "        eq:\n"
-    , "          - eDP1\n"
-    , "          - DP2-2\n"
+    , "      eq:\n"
+    , "        - eDP1\n"
+    , "        - DP2-2\n"
     , "\n"
     , "    wifi:\n"
-    , "      essid:\n"
-    , "        in:\n"
-    , "          - pb-and-j\n"
-    , "          - pb-and-j-5g\n"
+    , "      in:\n"
+    , "        - pb-and-j\n"
+    , "        - pb-and-j-5g\n"
     , "\n"
     , "  exec: \n"
     , "    xrandr\n"

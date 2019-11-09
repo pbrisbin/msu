@@ -3,12 +3,15 @@
 module MSU.Xrandr.Parse
     ( Display(..)
     , parseXrandr
+    , parseXrandrUnsafe
     )
 where
 
 import Control.Monad (void)
+import Control.Monad.IO.Class (MonadIO)
 import Text.Parsec
 import Text.Parsec.String
+import UnliftIO.Exception (throwString)
 
 data Display = Display
     { name :: String
@@ -20,6 +23,9 @@ data Display = Display
 parseXrandr :: String -> Either ParseError [Display]
 parseXrandr = parse parseDisplays "xrandr --query"
 
+parseXrandrUnsafe :: MonadIO m => String -> m [Display]
+parseXrandrUnsafe = either (throwString . show) pure . parseXrandr
+
 parseDisplays :: Parser [Display]
 parseDisplays = string "Screen" *> ignoreLine *> manyTill parseDisplay eof
 
@@ -28,7 +34,7 @@ parseDisplay = do
     name <- manyTill anyToken space
     connected <- parseConnected <* ignoreLine
     modes <- if connected then parseModeLines else skipModeLines
-    pure Display {..}
+    pure Display { .. }
 
 parseConnected :: Parser Bool
 parseConnected = True <$ string "connected" <|> False <$ string "disconnected"

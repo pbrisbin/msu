@@ -8,34 +8,23 @@ module MSU.Context
     )
 where
 
-import MSU.Xrandr.Parse hiding (Display)
-import qualified MSU.Xrandr.Parse as Xrandr
+import MSU.Xrandr.Parse
 import System.Process (readProcess)
-import UnliftIO.Exception (throwString)
 
 data Context = Context
-    { cDisplays :: [Display]
-    , cWifi :: Maybe Wifi
-    }
-
-newtype Display = Display
-    { dName :: String
-    }
+   { displays :: [Display]
+   , wifi :: Maybe Wifi
+   }
 
 newtype Wifi = Wifi
-    { wEssid :: String
+    { essid :: String
     }
 
 getContext :: IO Context
 getContext = Context <$> getDisplays <*> getWifi
 
 getDisplays :: IO [Display]
-getDisplays = do
-    result <- parseXrandr <$> readProcess "xrandr" ["--query"] ""
-    either
-        (throwString . show)
-        (pure . map (Display . Xrandr.name) . filter Xrandr.connected)
-        result
+getDisplays = parseXrandrUnsafe =<< readProcess "xrandr" ["--query"] ""
 
 -- TODO
 getWifi :: IO (Maybe Wifi)

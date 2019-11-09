@@ -19,7 +19,7 @@ main = do
 
     case args of
         ["create"] -> do
-            writeMonitorsFile yaml . inferMonitor =<< getContext
+            writeMonitorsFile yaml . createMonitor =<< getContext
             putStrLn $ "Template monitors rule written, see: " <> yaml
 
         _ -> do
@@ -29,7 +29,7 @@ main = do
             maybe
                 (putStrLn "No monitors rules matched")
                 (\Monitors {..} -> do
-                    putStrLn mExec
-                    callCommand mExec
+                    putStrLn exec
+                    callCommand exec
                 )
                 monitors
